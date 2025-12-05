@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Feedback Submitted</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; }
+        .container { max-width: 720px; margin: auto; }
+        .ok { background: #e8f5e9; border: 1px solid #a5d6a7; padding: 1rem; }
+        a { color: #0b57d0; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Thank you!</h1>
+    <div class="ok">
+        <p>Your feedback was submitted successfully.</p>
+        <p th:if="${submittedId}">Submission ID: <strong th:text="${submittedId}"></strong></p>
+    </div>
+    <p><a th:href="@{/feedback}">Submit another response</a> or <a th:href="@{/}">go back home</a>.</p>
+    <p>Admin area: <a th:href="@{/admin/feedback}">View feedback list</a> (login required)</p>
+ </div>
+</body>
+</html>

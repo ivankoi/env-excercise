@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Send Feedback</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; }
+        .container { max-width: 720px; margin: auto; }
+        label { display: block; margin-top: 1rem; font-weight: bold; }
+        input[type=text], select, textarea { width: 100%; padding: .6rem; box-sizing: border-box; }
+        textarea { min-height: 140px; }
+        .error { color: #b00020; font-size: .9rem; }
+        .actions { margin-top: 1rem; }
+        .note { color: #666; font-size: .9rem; }
+    </style>
+    <script>
+        // Limit client-side lengths (server also validates)
+        function limitLength(el, max){ if (el.value.length > max) el.value = el.value.substring(0, max); }
+    </script>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+</head>
+<body>
+<div class="container">
+    <h1>Send us your feedback</h1>
+    <form th:action="@{/feedback}" th:object="${feedback}" method="post" novalidate>
+        <label for="name">Name <span class="note">(optional, max 100)</span></label>
+        <input id="name" type="text" th:field="*{name}" maxlength="100" oninput="limitLength(this,100)"/>
+        <div class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+
+        <label for="email">Email <span class="note">(optional, max 100)</span></label>
+        <input id="email" type="text" th:field="*{email}" maxlength="100" oninput="limitLength(this,100)"/>
+        <div class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+
+        <label for="contactType">Contact type <span class="note">(required)</span></label>
+        <select id="contactType" th:field="*{contactType}" required>
+            <option th:each="ct : ${contactTypes}" th:value="${ct}" th:text="${ct}">GENERAL</option>
+        </select>
+        <div class="error" th:if="${#fields.hasErrors('contactType')}" th:errors="*{contactType}"></div>
+
+        <label for="message">Message <span class="note">(required, max 1000)</span></label>
+        <textarea id="message" th:field="*{message}" maxlength="1000" oninput="limitLength(this,1000)" required></textarea>
+        <div class="error" th:if="${#fields.hasErrors('message')}" th:errors="*{message}"></div>
+
+        <div th:if="${#fields.hasGlobalErrors()}">
+            <p class="error" th:each="ge : ${#fields.globalErrors()}" th:text="${ge}"></p>
+        </div>
+        <div class="error" th:if="${#fields.hasAnyErrors()}">Please correct the errors above.</div>
+
+        <div class="actions">
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+    <p class="note">Administrator? <a th:href="@{/admin/feedback}">Go to admin list</a></p>
+    <div th:if="${param.error}">
+        <p class="error" th:text="${param.error}"></p>
+    </div>
+
+
+</div>
+</body>
+</html>

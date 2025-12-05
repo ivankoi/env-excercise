@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Feedback List</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; }
+        .container { max-width: 1100px; margin: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: .5rem; vertical-align: top; }
+        th { background: #f5f5f5; text-align: left; }
+        .filters { display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; }
+        .filters select, .filters button { padding: .4rem .6rem; }
+        .mono { font-family: ui-monospace, Menlo, Consolas, monospace; }
+        .nowrap { white-space: nowrap; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Feedback submissions</h1>
+
+    <form class="filters" method="get" th:action="@{/admin/feedback}">
+        <label>
+            Contact type:
+            <select name="contactType">
+                <option value="" th:selected="${selectedContactType == null}">All</option>
+                <option th:each="ct : ${contactTypes}"
+                        th:value="${ct}"
+                        th:text="${ct}"
+                        th:selected="${selectedContactType == ct}">GENERAL</option>
+            </select>
+        </label>
+        <label>
+            Sort by date:
+            <select name="sort">
+                <option value="desc" th:selected="${sort=='desc'}">Newest first</option>
+                <option value="asc" th:selected="${sort=='asc'}">Oldest first</option>
+            </select>
+        </label>
+        <button type="submit">Apply</button>
+        <a th:href="@{/admin/feedback}">Reset</a>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Date of submission</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Contact type</th>
+            <th>Message</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(items)}">
+            <td colspan="6">No feedback available.</td>
+        </tr>
+        <tr th:each="f : ${items}">
+            <td class="mono" th:text="${f.id}">1</td>
+            <td class="nowrap" th:text="${#temporals.format(f.createdAt, 'yyyy-MM-dd HH:mm:ss')}" title="UTC time"></td>
+            <td th:text="${f.name}"></td>
+            <td th:text="${f.email}"></td>
+            <td th:text="${f.contactType}"></td>
+            <td th:text="${f.message}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p><a th:href="@{/feedback}">Back to feedback form</a></p>
+    <form th:action="@{/logout}" method="post" style="margin-top:1rem;">
+        <button type="submit">Logout</button>
+    </form>
+</div>
+</body>
+</html>
